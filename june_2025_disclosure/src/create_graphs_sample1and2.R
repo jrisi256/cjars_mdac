@@ -98,7 +98,7 @@ allcause_age_group <-
   )
 
 ggsave(
-  file.path(write_path, "1a_allcause_age_s1s2_group.png"),
+  file.path(write_path, "1b_allcause_age_s1s2_group.png"),
   allcause_age_group,
   width = 16,
   height = 9
