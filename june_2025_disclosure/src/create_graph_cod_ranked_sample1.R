@@ -25,6 +25,7 @@ list_sample1 <-
 cod_ranked_BlackGray <-
   list_sample1$`4_S1_rank_table_cj` |>
   filter(cause_of_death != "All cause") |>
+  mutate(`JII status` = if_else(`JII status` == "TRUE", "JII", "Non-JII")) |>
   ggplot(aes(x = fct_reorder(cause_of_death, -rank), y = `Proportion died`)) +
   geom_bar(stat = "identity", position = "dodge", aes(fill = `JII status`)) +
   coord_flip() +
@@ -35,7 +36,7 @@ cod_ranked_BlackGray <-
     title = "Comparing causes of death for JIIs vs non-JIIs",
     caption = "Results are based on sample 1 (MDAC only, MDAC death date)."
   ) +
-  scale_fill_manual(values = c("FALSE" = "#7F7F7F", "TRUE" = "#171717"))
+  scale_fill_manual(values = c("Non-JII" = "#7F7F7F", "JII" = "#171717"))
 
 ggsave(
   file.path(s1_write_path, "4a_cod_ranked_s1_BlackGray.png"),

@@ -130,24 +130,25 @@ ggsave(
 # Fig. 4 - Ranking relative causes of death.
 ################################################################################
 cod_ranked <-
-    list_sample1$`4_S1_rank_table_cj` |>
-    filter(cause_of_death != "All cause") |>
-    ggplot(aes(x = fct_reorder(cause_of_death, -rank), y = `Proportion died`)) +
-    geom_bar(stat = "identity", position = "dodge", aes(fill = `JII status`)) +
-    coord_flip() +
-    theme_bw() +
-    labs(
-        x = "Cause of death",
-        y = "Proportion who died of a specific cause (among those are who dead)",
-        title = "Comparing causes of death for JIIs vs non-JIIs",
-        caption = "Results are based on sample 1 (MDAC only, MDAC death date)."
-    )
+  list_sample1$`4_S1_rank_table_cj` |>
+  filter(cause_of_death != "All cause") |>
+  mutate(`JII status` = if_else(`JII status` == "TRUE", "JII", "Non-JII")) |>
+  ggplot(aes(x = fct_reorder(cause_of_death, -rank), y = `Proportion died`)) +
+  geom_bar(stat = "identity", position = "dodge", aes(fill = `JII status`)) +
+  coord_flip() +
+  theme_bw() +
+  labs(
+    x = "Cause of death",
+    y = "Proportion who died of a specific cause (among those are who dead)",
+    title = "Comparing causes of death for JIIs vs non-JIIs",
+    caption = "Results are based on sample 1 (MDAC only, MDAC death date)."
+  )
 
 ggsave(
-    file.path(s1_write_path, "4_cod_ranked_s1.png"),
-    cod_ranked,
-    width = 13,
-    height = 9
+  file.path(s1_write_path, "4_cod_ranked_s1.png"),
+  cod_ranked,
+  width = 13,
+  height = 9
 )
 
 ################################################################################
