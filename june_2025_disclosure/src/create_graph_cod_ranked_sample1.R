@@ -33,10 +33,14 @@ cod_ranked_BlackGray <-
   labs(
     x = "Cause of death",
     y = "Proportion who died of a specific cause (among those are who dead)",
-    title = "Comparing causes of death for JIIs vs non-JIIs",
-    caption = "Results are based on sample 1 (MDAC only, MDAC death date)."
+    title = "Comparing causes of death for JIIs vs non-JIIs"
   ) +
-  scale_fill_manual(values = c("Non-JII" = "#7F7F7F", "JII" = "#171717"))
+  scale_fill_manual(values = c("Non-JII" = "#7F7F7F", "JII" = "#171717")) +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 15),
+    title = element_text(size = 15)
+  )
 
 ggsave(
   file.path(s1_write_path, "4a_cod_ranked_s1_BlackGray.png"),
@@ -83,7 +87,6 @@ cod_ranked_clevelandDotPlot <-
     x = "Cause of death",
     y = "Proportion who died of a specific cause (among those are who dead)",
     title = "Comparing leading causes of death for JIIs vs non-JIIs",
-    caption = "Results are based on sample 1 (MDAC only, MDAC death date).",
     linetype = "Difference"
   ) +
   scale_color_manual(
@@ -91,6 +94,11 @@ cod_ranked_clevelandDotPlot <-
     breaks = c("JII", "Non-JII"),
     values = c("Non-JII" = "#BFBFBF", "JII" = "#030303"),
     guide = "legend"
+  ) +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 15),
+    title = element_text(size = 15)
   )
 
 ggsave(
