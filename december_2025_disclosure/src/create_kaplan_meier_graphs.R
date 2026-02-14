@@ -83,7 +83,8 @@ all_states_graph <-
     axis.text = element_text(size = 15),
     axis.title = element_text(size = 20),
     strip.text = element_text(size = 15)
-  )
+  ) +
+  scale_fill_manual(values = c("#7F7F7F", "#171717"))
 
 ggsave(
   file.path(write_path, "kaplan_meier_curves_by_state.png"),
