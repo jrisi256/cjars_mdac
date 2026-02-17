@@ -119,3 +119,65 @@ ggsave(
   width = 16,
   height = 9
 )
+
+################################################################################
+# Using dots instead of lines.
+################################################################################
+all_states_graph_points <-
+  ggplot(cleaned_df, aes(x = time, y = `survival rate`)) +
+  geom_point(aes(shape = group), color = "black", size = 2) + 
+  geom_ribbon(
+    aes(
+      ymin = `confidence interval L`,
+      ymax = `confidence interval H`,
+      fill = group
+    ),
+    alpha = 0.5
+  ) +
+  facet_wrap(~state) +
+  theme_bw() +
+  labs(x = "Time", y = "Survival Rate", fill = "JII Group", shape = "JII Group") +
+  theme(
+    axis.text = element_text(size = 15),
+    axis.title = element_text(size = 20),
+    strip.text = element_text(size = 15)
+  ) +
+  scale_fill_manual(values = c("#7F7F7F", "#171717"))
+
+ggsave(
+  file.path(write_path, "kaplan_meier_curves_by_state_points.png"),
+  all_states_graph_points,
+  width = 16,
+  height = 9
+)
+
+################################################################################
+# Using line types.
+################################################################################
+all_states_graph_lty <-
+  ggplot(cleaned_df, aes(x = time, y = `survival rate`)) +
+  geom_line(aes(lty = group), color = "black", linewidth = 1) + 
+  geom_ribbon(
+    aes(
+      ymin = `confidence interval L`,
+      ymax = `confidence interval H`,
+      fill = group
+    ),
+    alpha = 0.5
+  ) +
+  facet_wrap(~state) +
+  theme_bw() +
+  labs(x = "Time", y = "Survival Rate", fill = "JII Group", lty = "JII Group") +
+  theme(
+    axis.text = element_text(size = 15),
+    axis.title = element_text(size = 20),
+    strip.text = element_text(size = 15)
+  ) +
+  scale_fill_manual(values = c("#7F7F7F", "#171717"))
+
+ggsave(
+  file.path(write_path, "kaplan_meier_curves_by_state_lty.png"),
+  all_states_graph_lty,
+  width = 16,
+  height = 9
+)
