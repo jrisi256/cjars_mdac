@@ -28,7 +28,7 @@ list_sample2 <-
 ################################################################################
 s1_age <-
   list_sample1$`1_S1_ci_all_cause_age` |>
-  mutate(Sample = "Sample 1 (7 year follow-up)")
+  mutate(Sample = "Sample 1 (8 year follow-up)")
 
 s2_age <-
   list_sample2$`8_S2_ci_all_cause_age`|>
@@ -49,7 +49,7 @@ allcause_age_facet <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up"
+    title = "8 year follow-up vs. 16 year follow-up"
   ) +
   theme(
     axis.text = element_text(size = 15),
@@ -80,7 +80,7 @@ allcause_age_group <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up"
+    title = "8 year follow-up vs. 16 year follow-up"
   ) +
   theme(
     axis.text = element_text(size = 15),
@@ -92,7 +92,7 @@ allcause_age_group <-
   scale_fill_manual(
     values =
       c(
-        "Sample 1 (7 year follow-up)" = "#BFBFBF",
+        "Sample 1 (8 year follow-up)" = "#BFBFBF",
         "Sample 2 (16 year follow-up)" = "#696969"
       )
   )
@@ -109,7 +109,7 @@ ggsave(
 ################################################################################
 s1_age_race <-
   list_sample1$`2_S1_ci_all_cause_age_race` |>
-  mutate(Sample = "Sample 1 (7 year follow-up)")
+  mutate(Sample = "Sample 1 (8 year follow-up)")
 
 s2_age_race <-
   list_sample2$`9_S2_ci_all_cause_age_race`|>
@@ -138,7 +138,7 @@ allcause_age_race_facet <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up"
+    title = "8 year follow-up vs. 16 year follow-up"
   ) +
   theme(
     axis.text = element_text(size = 15),
@@ -170,7 +170,7 @@ allcause_age_race_GroupSample <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up"
+    title = "8 year follow-up vs. 16 year follow-up"
   ) +
   theme(
     axis.text = element_text(size = 15),
@@ -182,7 +182,7 @@ allcause_age_race_GroupSample <-
   scale_fill_manual(
     values =
       c(
-        "Sample 1 (7 year follow-up)" = "#BFBFBF",
+        "Sample 1 (8 year follow-up)" = "#BFBFBF",
         "Sample 2 (16 year follow-up)" = "#696969"
       )
   )
@@ -210,7 +210,7 @@ allcause_age_race_GroupRace <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up",
+    title = "8 year follow-up vs. 16 year follow-up",
     fill = "Race/Ethnicity"
   ) +
   theme(
@@ -239,7 +239,7 @@ ggsave(
 ################################################################################
 s1_age_sex <-
   list_sample1$`3_S1_ci_all_cause_age_sex` |>
-  mutate(Sample = "Sample 1 (7 year follow-up)")
+  mutate(Sample = "Sample 1 (8 year follow-up)")
 
 s2_age_sex <-
   list_sample2$`10_S2_ci_all_cause_age_sex` |>
@@ -261,7 +261,7 @@ allcause_age_sex_facet <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up"
+    title = "8 year follow-up vs. 16 year follow-up"
   ) +
   theme(
     axis.text = element_text(size = 15),
@@ -293,7 +293,7 @@ allcause_age_sex_GroupSample <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up"
+    title = "8 year follow-up vs. 16 year follow-up"
   ) +
   theme(
     axis.text = element_text(size = 15),
@@ -305,7 +305,7 @@ allcause_age_sex_GroupSample <-
   scale_fill_manual(
     values =
       c(
-        "Sample 1 (7 year follow-up)" = "#BFBFBF",
+        "Sample 1 (8 year follow-up)" = "#BFBFBF",
         "Sample 2 (16 year follow-up)" = "#696969"
       )
   )
@@ -333,7 +333,7 @@ allcause_age_sex_GroupSex <-
   labs(
     x = "Age group",
     y = "Ratio of all-cause mortality rates for JII to non-JII individuals",
-    title = "7 year follow-up vs. 16 year follow-up",
+    title = "8 year follow-up vs. 16 year follow-up",
     fill = "Sex"
   ) +
   theme(
