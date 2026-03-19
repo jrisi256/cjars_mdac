@@ -14,7 +14,7 @@ out_dir <- here("cjars_data_availability", "output")
 # Download CJARS file.
 ################################################################################
 download.file(
-  "https://raw.githubusercontent.com/umcjars/cjars_meta/refs/heads/main/CJARS_2023Q3_coverage.csv",
+  "https://raw.githubusercontent.com/umcjars/cjars_meta/refs/heads/main/CJARS_2023Q3_coverage_FSRDC.csv",
   here("cjars_data_availability", "input", "cjars_coverage.csv")
 )
 
