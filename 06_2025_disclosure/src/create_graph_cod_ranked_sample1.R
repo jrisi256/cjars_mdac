@@ -6,13 +6,14 @@ library(readxl)
 library(ggplot2)
 library(forcats)
 
-read_path <- here("june_2025_disclosure", "disclosure")
-s1_write_path <- here("june_2025_disclosure", "graphs", "sample1")
+read_path <- here("06_2025_disclosure", "disclosure")
+s1_write_path <- here("06_2025_disclosure", "graphs", "sample1")
 
 ################################################################################
 # Read in sample 1 (MDAC only)
 ################################################################################
-sheets_sample1 <- excel_sheets(file.path(read_path, "sample_1_disclosure_tables.xlsx"))
+sheets_sample1 <-
+  excel_sheets(file.path(read_path, "sample_1_disclosure_tables.xlsx"))
 
 list_sample1 <-
   sheets_sample1 |>

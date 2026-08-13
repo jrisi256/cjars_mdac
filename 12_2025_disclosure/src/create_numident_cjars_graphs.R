@@ -4,8 +4,8 @@ library(dplyr)
 library(readxl)
 library(ggplot2)
 
-read_path <- here("december_2025_disclosure", "disclosure")
-write_path <- here("december_2025_disclosure", "graphs")
+read_path <- here("12_2025_disclosure", "disclosure")
+write_path <- here("12_2025_disclosure", "graphs")
 
 ################################################################################
 # Read in sample.

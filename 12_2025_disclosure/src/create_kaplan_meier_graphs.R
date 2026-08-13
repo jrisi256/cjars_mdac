@@ -6,13 +6,14 @@ library(readxl)
 library(stringr)
 library(ggplot2)
 
-read_path <- here("december_2025_disclosure", "disclosure")
-write_path <- here("december_2025_disclosure", "graphs")
+read_path <- here("12_2025_disclosure", "disclosure")
+write_path <- here("12_2025_disclosure", "graphs")
 
 ################################################################################
 # Read in sample.
 ################################################################################
-sheets <- excel_sheets(file.path(read_path, "S3-7_disclosure_tables.xlsx"))[11:15]
+sheets <-
+  excel_sheets(file.path(read_path, "S3-7_disclosure_tables.xlsx"))[11:15]
 
 list <-
   sheets |>

@@ -4,14 +4,17 @@ library(dplyr)
 library(readxl)
 library(ggplot2)
 
-read_path <- here("june_2025_disclosure", "disclosure")
-write_path <- here("june_2025_disclosure", "graphs", "sample1and2")
+read_path <- here("06_2025_disclosure", "disclosure")
+write_path <- here("06_2025_disclosure", "graphs", "sample1and2")
 
 ################################################################################
 # Read in samples 1 and 2.
 ################################################################################
-sheets_sample1 <- excel_sheets(file.path(read_path, "sample_1_disclosure_tables.xlsx"))
-sheets_sample2 <- excel_sheets(file.path(read_path, "sample_2_disclosure_tables.xlsx"))
+sheets_sample1 <-
+  excel_sheets(file.path(read_path, "sample_1_disclosure_tables.xlsx"))
+
+sheets_sample2 <-
+  excel_sheets(file.path(read_path, "sample_2_disclosure_tables.xlsx"))
 
 list_sample1 <-
   sheets_sample1 |>

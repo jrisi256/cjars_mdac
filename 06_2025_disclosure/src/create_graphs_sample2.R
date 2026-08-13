@@ -6,24 +6,27 @@ library(readxl)
 library(ggplot2)
 library(forcats)
 
-read_path <- here("june_2025_disclosure", "disclosure")
-s1_write_path <- here("june_2025_disclosure", "graphs", "sample1")
+read_path <- here("06_2025_disclosure", "disclosure")
+s2_write_path <- here("06_2025_disclosure", "graphs", "sample2")
 
 ################################################################################
-# Read in sample 1 (MDAC only)
+# Read in sample 2 (Numident + MDAC)
 ################################################################################
-sheets_sample1 <- excel_sheets(file.path(read_path, "sample_1_disclosure_tables.xlsx"))
+sheets_sample2 <-
+  excel_sheets(file.path(read_path, "sample_2_disclosure_tables.xlsx"))
 
-list_sample1 <-
-    sheets_sample1 |>
+list_sample2 <-
+    sheets_sample2 |>
     set_names() |>
-    map(read_xlsx, path = file.path(read_path, "sample_1_disclosure_tables.xlsx"))
+    map(
+      read_xlsx, path = file.path(read_path, "sample_2_disclosure_tables.xlsx")
+    )
 
 ################################################################################
-# Fig. 1 - All-cause mortality by age
+# Fig. 8 - All-cause mortality by age
 ################################################################################
 allcause_age <-
-    ggplot(list_sample1$`1_S1_ci_all_cause_age`, aes(x = age_bucket, y = Ratio)) +
+    ggplot(list_sample2$`8_S2_ci_all_cause_age`, aes(x = age_bucket, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
         aes(
@@ -43,22 +46,31 @@ allcause_age <-
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
                 "Error bars are 95% Poisson CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "1_allcause_age_s1.png"),
+    file.path(s2_write_path, "8_allcause_age_s2.png"),
     allcause_age,
     width = 8,
     height = 6
 )
 
 ################################################################################
-# Fig. 2 - All-cause mortality by age and race.
+# Fig. 9 - All-cause mortality by age and race.
 ################################################################################
 allcause_age_race <-
-    ggplot(list_sample1$`2_S1_ci_all_cause_age_race`, aes(x = age_bucket, y = Ratio)) +
+    list_sample2$`9_S2_ci_all_cause_age_race` |>
+    mutate(
+        race =
+            case_when(
+                race == "black" ~ "Black",
+                race == "white" ~ "White",
+                race == "hisp" ~ "Hispanic"
+            )
+    ) |>
+    ggplot(aes(x = age_bucket, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
         aes(
@@ -79,22 +91,24 @@ allcause_age_race <-
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
                 "Error bars are 95% Poisson CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "2_allcause_age_race_s1.png"),
+    file.path(s2_write_path, "9_allcause_age_race_s2.png"),
     allcause_age_race,
     width = 13,
     height = 9
 )
 
 ################################################################################
-# Fig. 3 - All-cause mortality by age and sex.
+# Fig. 10 - All-cause mortality by age and sex.
 ################################################################################
 allcause_age_sex <-
-    ggplot(list_sample1$`3_S1_ci_all_cause_age_sex`, aes(x = age_bucket, y = Ratio)) +
+    list_sample2$`10_S2_ci_all_cause_age_sex` |>
+    mutate(sex = if_else(sex == "female", "Female", "Male")) |>
+    ggplot(aes(x = age_bucket, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
         aes(
@@ -115,47 +129,22 @@ allcause_age_sex <-
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
                 "Error bars are 95% Poisson CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "3_allcause_age_sex_s1.png"),
+    file.path(s2_write_path, "10_allcause_age_sex_s2.png"),
     allcause_age_sex,
     width = 13,
     height = 9
 )
 
 ################################################################################
-# Fig. 4 - Ranking relative causes of death.
-################################################################################
-cod_ranked <-
-  list_sample1$`4_S1_rank_table_cj` |>
-  filter(cause_of_death != "All cause") |>
-  mutate(`JII status` = if_else(`JII status` == "TRUE", "JII", "Non-JII")) |>
-  ggplot(aes(x = fct_reorder(cause_of_death, -rank), y = `Proportion died`)) +
-  geom_bar(stat = "identity", position = "dodge", aes(fill = `JII status`)) +
-  coord_flip() +
-  theme_bw() +
-  labs(
-    x = "Cause of death",
-    y = "Proportion who died of a specific cause (among those are who dead)",
-    title = "Comparing causes of death for JIIs vs non-JIIs",
-    caption = "Results are based on sample 1 (MDAC only, MDAC death date)."
-  )
-
-ggsave(
-  file.path(s1_write_path, "4_cod_ranked_s1.png"),
-  cod_ranked,
-  width = 13,
-  height = 9
-)
-
-################################################################################
-# Fig. 5 - Survival curves for JII vs. non-JII
+# Fig. 11 - Survival curves for JII vs. non-JII
 ################################################################################
 survival <-
-    list_sample1$`5_S1_survival_cj` |>
+    list_sample2$`11_S2_survival_cj` |>
     pivot_longer(
         cols = matches("Age-adjusted"),
         names_to = "jii_status",
@@ -175,22 +164,30 @@ survival <-
                 "Survival rates are calculated using age-adjustment and MDAC sampling weights.\n",
                 "The difference between JIIs and non-JIIs at each time point is significantly different at the 99.9% level.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "5_survival_s1.png"),
+    file.path(s2_write_path, "11_survival_s2.png"),
     survival,
     width = 10,
     height = 8
 )
 
 ################################################################################
-# Fig. 6 - Survival curves for JII vs. non-JII by race.
+# Fig. 12 - Survival curves for JII vs. non-JII by race.
 ################################################################################
 survival_race <-
-    list_sample1$`6_S1_survival_race` |>
+    list_sample2$`12_S2_survival_race` |>
+    mutate(
+        race =
+            case_when(
+                race == "black" ~ "Black",
+                race == "white" ~ "White",
+                race == "hisp" ~ "Hispanic"
+            )
+    ) |>
     pivot_longer(
         cols = matches("Age-adjusted"),
         names_to = "jii_status",
@@ -211,22 +208,23 @@ survival_race <-
                 "Survival rates are calculated using age-adjustment and MDAC sampling weights.\n",
                 "The difference between JIIs and non-JIIs at each time point is significantly different at the 99.9% level.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "6_survival_race_s1.png"),
+    file.path(s2_write_path, "12_survival_race_s2.png"),
     survival_race,
-    width = 10,
-    height = 8
+    width = 13,
+    height = 10
 )
 
 ################################################################################
-# Fig. 7 - Survival curves for JII vs. non-JII by sex.
+# Fig. 13 - Survival curves for JII vs. non-JII by sex.
 ################################################################################
 survival_sex <-
-    list_sample1$`7_S1_survival_sex` |>
+    list_sample2$`13_S2_survival_sex` |>
+    mutate(sex = if_else(sex == "female", "Female", "Male")) |>
     pivot_longer(
         cols = matches("Age-adjusted"),
         names_to = "jii_status",
@@ -247,132 +245,22 @@ survival_sex <-
                 "Survival rates are calculated using age-adjustment and MDAC sampling weights.\n",
                 "The difference between JIIs and non-JIIs at each time point is significantly different at the 99.9% level.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "7_survival_sex_s1.png"),
+    file.path(s2_write_path, "13_survival_sex_s2.png"),
     survival_sex,
     width = 10,
     height = 8
 )
 
 ################################################################################
-# Fig. 14 - Comparing cause-specific mortality rates.
-################################################################################
-cod <-
-    list_sample1$`14_S1_ci_cod_condensed_cj` |>
-    ggplot(aes(x = cause_of_death, y = Ratio)) +
-    geom_bar(stat = "identity") +
-    geom_errorbar(
-        aes(
-            ymin = ci95_lower_ageAdjusted_fayfeuer,
-            ymax = ci95_upper_ageAdjusted_fayfeuer
-        ),
-        width = 0.2
-    ) +
-    geom_hline(yintercept = 1) +
-    theme_bw() +
-    labs(
-        x = "Cause of death",
-        y = "Ratio of cause-specific age-adjusted mortality rates for JII to non-JII individuals",
-        title = "Comparing mortality rates by cause of death for JIIs vs. non-JIIs",
-        caption = 
-            paste0(
-                "Values aboue 1 indicate JIIs had higher mortality.\n",
-                "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
-                "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
-            )
-    )
-
-ggsave(
-    file.path(s1_write_path, "14_cod_s1.png"),
-    cod,
-    width = 10,
-    height = 8
-)
-
-################################################################################
-# Fig. 15 - Comparing cause-specific mortality rates by race.
-################################################################################
-cod_race <-
-    list_sample1$`15_S1_ci_cod_condensed_race` |>
-    ggplot(aes(x = cause_of_death, y = Ratio)) +
-    geom_bar(stat = "identity") +
-    geom_errorbar(
-        aes(
-            ymin = ci95_lower_ageAdjusted_fayfeuer,
-            ymax = ci95_upper_ageAdjusted_fayfeuer
-        ),
-        width = 0.2
-    ) +
-    geom_hline(yintercept = 1) +
-    facet_wrap(~race) +
-    theme_bw() +
-    labs(
-        x = "Cause of death",
-        y = "Ratio of cause-specific age-adjusted mortality rates for JII to non-JII individuals",
-        title = "Comparing mortality rates by cause of death for JIIs vs. non-JIIs by race",
-        caption = 
-            paste0(
-                "Values aboue 1 indicate JIIs had higher mortality.\n",
-                "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
-                "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
-            )
-    )
-
-ggsave(
-    file.path(s1_write_path, "15_cod_race_s1.png"),
-    cod_race,
-    width = 12,
-    height = 10
-)
-
-################################################################################
-# Fig. 16 - Comparing cause-specific mortality rates by sex.
-################################################################################
-cod_sex <-
-    list_sample1$`16_S1_ci_cod_condensed_sex` |>
-    ggplot(aes(x = cause_of_death, y = Ratio)) +
-    geom_bar(stat = "identity") +
-    geom_errorbar(
-        aes(
-            ymin = ci95_lower_ageAdjusted_fayfeuer,
-            ymax = ci95_upper_ageAdjusted_fayfeuer
-        ),
-        width = 0.2
-    ) +
-    geom_hline(yintercept = 1) +
-    facet_wrap(~sex) +
-    theme_bw() +
-    labs(
-        x = "Cause of death",
-        y = "Ratio of cause-specific age-adjusted mortality rates for JII to non-JII individuals",
-        title = "Comparing mortality rates by cause of death for JIIs vs. non-JIIs by sex",
-        caption = 
-            paste0(
-                "Values aboue 1 indicate JIIs had higher mortality.\n",
-                "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
-                "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
-            )
-    )
-
-ggsave(
-    file.path(s1_write_path, "16_cod_sex_s1.png"),
-    cod_sex,
-    width = 12,
-    height = 10
-)
-
-################################################################################
-# Fig. 17 - All-cause age-adjusted: JIIs vs. non-JIIs.
+# Fig. 21 - All-cause age-adjusted: JIIs vs. non-JIIs.
 ################################################################################
 allcause_ageadjusted <-
-    list_sample1$`17_S1_ci_all_cause_cj` |>
+    list_sample2$`21_S2_ci_all_cause_cj` |>
     ggplot(aes(x = 1, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
@@ -394,22 +282,30 @@ allcause_ageadjusted <-
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
                 "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "17_allcause_ageadjusted_s1.png"),
+    file.path(s2_write_path, "21_allcause_ageadjusted_s2.png"),
     allcause_ageadjusted,
     width = 8,
     height = 6
 )
 
 ################################################################################
-# Fig. 18 - All-cause age-adjusted: JIIs vs. non-JIIs by race.
+# Fig. 22 - All-cause age-adjusted: JIIs vs. non-JIIs by race.
 ################################################################################
 allcause_ageadjusted_race <-
-    list_sample1$`18_S1_ci_all_cause_race` |>
+    list_sample2$`22_S2_ci_all_cause_race` |>
+    mutate(
+        race =
+            case_when(
+                race == "black" ~ "Black",
+                race == "white" ~ "White",
+                race == "hisp" ~ "Hispanic"
+            )
+    ) |>
     ggplot(aes(x = race, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
@@ -430,22 +326,23 @@ allcause_ageadjusted_race <-
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
                 "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "18_allcause_ageadjusted_race_s1.png"),
+    file.path(s2_write_path, "22_allcause_ageadjusted_race_s2.png"),
     allcause_ageadjusted_race,
     width = 10,
     height = 8
 )
 
 ################################################################################
-# Fig. 19 - All-cause age-adjusted: JIIs vs. non-JIIs by sex.
+# Fig. 23 - All-cause age-adjusted: JIIs vs. non-JIIs by sex.
 ################################################################################
 allcause_ageadjusted_sex <-
-    list_sample1$`19_S1_ci_all_cause_sex` |>
+    list_sample2$`23_S2_ci_all_cause_sex` |>
+    mutate(sex = if_else(sex == "female", "Female", "Male")) |>
     ggplot(aes(x = sex, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
@@ -466,28 +363,37 @@ allcause_ageadjusted_sex <-
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
                 "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "19_allcause_ageadjusted_sex_s1.png"),
+    file.path(s2_write_path, "23_allcause_ageadjusted_sex_s2.png"),
     allcause_ageadjusted_sex,
     width = 10,
     height = 8
 )
 
 ################################################################################
-# Fig. 20 - All-cause age-adjusted: JIIs vs. non-JIIs by race and sex.
+# Fig. 24 - All-cause age-adjusted: JIIs vs. non-JIIs by race and sex.
 ################################################################################
 allcause_ageadjusted_race_sex <-
-    list_sample1$`20_S1_ci_all_cause_race_sex` |>
+    list_sample2$`24_S2_ci_all_cause_race_sex` |>
+    mutate(
+        race =
+            case_when(
+                race == "black" ~ "Black",
+                race == "white" ~ "White",
+                race == "hisp" ~ "Hispanic"
+            )
+    ) |>
+    mutate(sex = if_else(sex == "female", "Female", "Male")) |>
     ggplot(aes(x = race, y = Ratio)) +
     geom_bar(stat = "identity") +
     geom_errorbar(
         aes(
-            ymin = ci95_lower_ageAdjusted_fayfeuer,
-            ymax = ci95_upper_ageAdjusted_fayfeuer
+            ymin = ci95_lower_ageAdjusted_poisson,
+            ymax = ci95_upper_ageAdjusted_poisson
         ),
         width = 0.2
     ) +
@@ -501,14 +407,14 @@ allcause_ageadjusted_race_sex <-
         caption = 
             paste0(
                 "Values aboue 1 indicate JIIs had higher mortality.\n",
-                "Error bars are 95% Fay-Feuer CIs weighted by MDAC sampling weights.\n",
+                "Error bars are 95% Poisson CIs weighted by MDAC sampling weights.\n",
                 "We treat the overall JII population as the reference population for age-adjustment purposes.\n",
-                "Results are based on sample 1 (MDAC only, MDAC death date)."
+                "Results are based on sample 2 (Numident + MDAC, Numident death date)."
             )
     )
 
 ggsave(
-    file.path(s1_write_path, "20_allcause_ageadjusted_race_sex_s1.png"),
+    file.path(s2_write_path, "24_allcause_ageadjusted_race_sex_s2.png"),
     allcause_ageadjusted_race_sex,
     width = 10,
     height = 8
